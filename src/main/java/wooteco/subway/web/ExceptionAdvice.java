@@ -2,7 +2,6 @@ package wooteco.subway.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -23,11 +22,11 @@ public class ExceptionAdvice {
 		logger.error("domain error >> {}", e.getMessage());
 	}
 
-	@ExceptionHandler(DbActionExecutionException.class)
-	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = DUPLICATE_MESSAGE)
-	public void duplicateExceptionHandler(Exception e) {
-		logger.error("db error >> {}", e.getMessage());
-	}
+	// @ExceptionHandler(DbActionExecutionException.class)
+	// @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = DUPLICATE_MESSAGE)
+	// public void duplicateExceptionHandler(Exception e) {
+	// 	logger.error("db error >> {}", e.getMessage());
+	// }
 
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = BAD_REQUEST_MESSAGE)

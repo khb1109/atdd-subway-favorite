@@ -2,44 +2,49 @@ package wooteco.subway.domain.line;
 
 import java.util.Objects;
 
-import wooteco.subway.domain.BaseEntity;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import wooteco.subway.domain.BaseEntity;
+import wooteco.subway.domain.station.Station;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity
 public class LineStation extends BaseEntity {
-	private Long preStationId;
-	private Long stationId;
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	@OneToOne
+	private Station preStation;
+
+	@OneToOne
+	private Station station;
+
 	private int distance;
 	private int duration;
 
-	public LineStation(Long preStationId, Long stationId, int distance, int duration) {
-		this.preStationId = preStationId;
-		this.stationId = stationId;
+	public LineStation(Station preStation, Station station, int distance, int duration) {
+		this.preStation = preStation;
+		this.station = station;
 		this.distance = distance;
 		this.duration = duration;
 	}
 
-	public void updatePreLineStation(Long preStationId) {
-		this.preStationId = preStationId;
+	public void updatePreLineStation(Station preStation) {
+		this.preStation = preStation;
 	}
 
 	public boolean isLineStationOf(Long preStationId, Long stationId) {
-		return this.preStationId.equals(preStationId) && this.stationId.equals(stationId)
-			|| this.preStationId.equals(stationId) && this.stationId.equals(preStationId);
-	}
-
-	public Long getPreStationId() {
-		return preStationId;
-	}
-
-	public Long getStationId() {
-		return stationId;
-	}
-
-	public int getDistance() {
-		return distance;
-	}
-
-	public int getDuration() {
-		return duration;
+		return this.preStation.equals(preStationId) && this.station.equals(stationId)
+			|| this.preStation.equals(stationId) && this.station.equals(preStationId);
 	}
 
 	@Override
@@ -51,12 +56,12 @@ public class LineStation extends BaseEntity {
 		LineStation that = (LineStation)o;
 		return distance == that.distance &&
 			duration == that.duration &&
-			Objects.equals(preStationId, that.preStationId) &&
-			Objects.equals(stationId, that.stationId);
+			Objects.equals(preStation, that.preStation) &&
+			Objects.equals(station, that.station);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(preStationId, stationId, distance, duration);
+		return Objects.hash(preStation, station, distance, duration);
 	}
 }

@@ -7,69 +7,83 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import wooteco.subway.domain.station.Station;
+
+@Embeddable
+@NoArgsConstructor
+@Getter
+@Setter
 public class LineStations {
-    private Set<LineStation> stations;
+	@OneToMany
+	@JoinColumn(name = "line")
+	private Set<LineStation> lineStations = new HashSet<>();
 
-    public LineStations(Set<LineStation> stations) {
-        this.stations = stations;
-    }
+	public LineStations(Set<LineStation> lineStations) {
+		this.lineStations = lineStations;
+	}
 
-    public static LineStations empty() {
-        return new LineStations(new HashSet<>());
-    }
+	public static LineStations empty() {
+		return new LineStations(new HashSet<>());
+	}
 
-    public void add(LineStation targetLineStation) {
-        updatePreStationOfNextLineStation(targetLineStation.getPreStationId(),
-            targetLineStation.getStationId());
-        stations.add(targetLineStation);
-    }
+	public void add(LineStation targetLineStation) {
+		updatePreStationOfNextLineStation(targetLineStation.getPreStation(),
+			targetLineStation.getStation());
+		lineStations.add(targetLineStation);
+	}
 
-    private void remove(LineStation targetLineStation) {
-        updatePreStationOfNextLineStation(targetLineStation.getStationId(),
-            targetLineStation.getPreStationId());
-        stations.remove(targetLineStation);
-    }
+	private void remove(LineStation targetLineStation) {
+		updatePreStationOfNextLineStation(targetLineStation.getStation(),
+			targetLineStation.getPreStation());
+		lineStations.remove(targetLineStation);
+	}
 
-    public void removeById(Long targetStationId) {
-        extractByStationId(targetStationId)
-            .ifPresent(this::remove);
-    }
+	public void removeById(Long targetStationId) {
+		extractByStationId(targetStationId)
+			.ifPresent(this::remove);
+	}
 
-    public List<Long> getStationIds() {
-        List<Long> result = new ArrayList<>();
-        extractNext(null, result);
-        return result;
-    }
+	public List<Long> getStationIds() {
+		List<Long> result = new ArrayList<>();
+		extractNext(null, result);
+		//
+		// return result;
+		return null;
+	}
 
-    private void extractNext(Long preStationId, List<Long> ids) {
-        stations.stream()
-            .filter(it -> Objects.equals(it.getPreStationId(), preStationId))
-            .findFirst()
-            .ifPresent(it -> {
-                Long nextStationId = it.getStationId();
-                ids.add(nextStationId);
-                extractNext(nextStationId, ids);
-            });
-    }
+	private void extractNext(Long preStationId, List<Long> ids) {
+		// stations.stream()
+		// 	.filter(it -> Objects.equals(it.getPreStation(), preStationId))
+		// 	.findFirst()
+		// 	.ifPresent(it -> {
+		// 		Long nextStationId = it.getStation();
+		// 		ids.add(nextStationId);
+		// 		extractNext(nextStationId, ids);
+		// 	});
+	}
 
-    private void updatePreStationOfNextLineStation(Long targetStationId, Long newPreStationId) {
-        extractByPreStationId(targetStationId)
-            .ifPresent(it -> it.updatePreLineStation(newPreStationId));
-    }
+	private void updatePreStationOfNextLineStation(Station targetStation, Station newPreStation) {
+		extractByPreStationId(targetStation)
+			.ifPresent(it -> it.updatePreLineStation(newPreStation));
+	}
 
-    private Optional<LineStation> extractByStationId(Long stationId) {
-        return stations.stream()
-            .filter(it -> Objects.equals(it.getStationId(), stationId))
-            .findFirst();
-    }
+	private Optional<LineStation> extractByStationId(Long stationId) {
+		return lineStations.stream()
+			.filter(it -> Objects.equals(it.getStation(), stationId))
+			.findFirst();
+	}
 
-    private Optional<LineStation> extractByPreStationId(Long preStationId) {
-        return stations.stream()
-            .filter(it -> Objects.equals(it.getPreStationId(), preStationId))
-            .findFirst();
-    }
+	private Optional<LineStation> extractByPreStationId(Station preStation) {
+		return lineStations.stream()
+			.filter(it -> Objects.equals(it.getPreStation(), preStation))
+			.findFirst();
+	}
 
-    public Set<LineStation> getStations() {
-        return stations;
-    }
 }

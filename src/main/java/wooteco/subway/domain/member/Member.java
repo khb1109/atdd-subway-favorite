@@ -2,13 +2,22 @@ package wooteco.subway.domain.member;
 
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.annotation.Id;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
+import org.apache.commons.lang3.StringUtils;
+
+import lombok.Getter;
+import lombok.Setter;
 import wooteco.subway.domain.BaseEntity;
 
+@Entity
+@Getter
+@Setter
 public class Member extends BaseEntity {
 	@Id
+	@GeneratedValue
 	private Long id;
 	private String email;
 	private String name;
@@ -41,22 +50,6 @@ public class Member extends BaseEntity {
 
 	public boolean checkPassword(String password) {
 		return this.password.equals(password);
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getPassword() {
-		return password;
 	}
 
 	@Override

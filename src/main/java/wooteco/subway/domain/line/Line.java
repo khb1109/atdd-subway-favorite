@@ -1,24 +1,28 @@
 package wooteco.subway.domain.line;
 
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Set;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Embedded;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
+import lombok.Getter;
+import lombok.Setter;
 import wooteco.subway.domain.BaseEntity;
 
+@Entity
+@Getter
+@Setter
 public class Line extends BaseEntity {
-	@Id
+	@Id``
 	private Long id;
 	private String name;
 	private LocalTime startTime;
 	private LocalTime endTime;
 	private int intervalTime;
 
-	@Embedded.Empty
-	private LineStations stations = LineStations.empty();
+	@Embedded
+	private LineStations lineStations = LineStations.empty();
 
 	public Line() {
 	}
@@ -49,39 +53,11 @@ public class Line extends BaseEntity {
 		}
 	}
 
-	public void addLineStation(LineStation lineStation) {
-		stations.add(lineStation);
-	}
-
-	public void removeLineStationById(Long stationId) {
-		stations.removeById(stationId);
-	}
-
-	public List<Long> getStationIds() {
-		return stations.getStationIds();
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public LocalTime getStartTime() {
-		return startTime;
-	}
-
-	public LocalTime getEndTime() {
-		return endTime;
-	}
-
-	public int getIntervalTime() {
-		return intervalTime;
-	}
-
-	public Set<LineStation> getStations() {
-		return stations.getStations();
-	}
+	// public void addLineStation(LineStation lineStation) {
+	// 	lineStations.add(lineStation);
+	// }
+	//
+	// public void removeLineStationById(Long stationId) {
+	// 	lineStations.removeById(stationId);
+	// }
 }

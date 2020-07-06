@@ -1,6 +1,5 @@
 package wooteco.subway.service.member;
 
-import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.stereotype.Service;
 
 import wooteco.subway.domain.member.Member;
@@ -25,7 +24,7 @@ public class MemberService {
 	public Member createMember(Member member) {
 		try {
 			return memberRepository.save(member);
-		} catch (DbActionExecutionException e) {
+		} catch (Exception e) { // todo : 변경
 			throw new DuplicateEmailException();
 		}
 	}

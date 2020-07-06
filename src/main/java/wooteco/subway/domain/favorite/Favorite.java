@@ -2,53 +2,59 @@ package wooteco.subway.domain.favorite;
 
 import java.util.Objects;
 
-import org.springframework.data.annotation.Id;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
+import lombok.Getter;
+import lombok.Setter;
 import wooteco.subway.domain.BaseEntity;
 import wooteco.subway.domain.member.Member;
+import wooteco.subway.domain.station.Station;
 import wooteco.subway.service.favorite.dto.FavoriteRequest;
 
+@Entity
+@Getter
+@Setter
 public class Favorite extends BaseEntity {
 	@Id
+	@GeneratedValue
 	private Long id;
-	private Long memberId;
-	private Long sourceStationId;
-	private Long targetStationId;
+
+	@ManyToOne
+	private Member member;
+
+	@OneToOne
+	private Station sourceStation;
+
+	@OneToOne
+	private Station targetStation;
 
 	public Favorite() {
 	}
 
-	public Favorite(Long memberId, Long sourceStationId, Long targetStationId) {
-		this.memberId = memberId;
-		this.sourceStationId = sourceStationId;
-		this.targetStationId = targetStationId;
+	public Favorite(Long id, Member member) {
+		this.id = id;
+		this.member = member;
 	}
 
-	public Favorite(Long id, Long memberId, Long sourceStationId, Long targetStationId) {
+	public Favorite(Member member, Station sourceStation, Station targetStation) {
+		this.member = member;
+		this.sourceStation = sourceStation;
+		this.targetStation = targetStation;
+	}
+
+	public Favorite(Long id, Member member, Station sourceStation, Station targetStation) {
 		this.id = id;
-		this.memberId = memberId;
-		this.sourceStationId = sourceStationId;
-		this.targetStationId = targetStationId;
+		this.member = member;
+		this.sourceStation = sourceStation;
+		this.targetStation = targetStation;
 	}
 
 	public boolean isNotSameMember(Member member) {
-		return !Objects.equals(member.getId(), memberId);
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public Long getMemberId() {
-		return memberId;
-	}
-
-	public Long getSourceStationId() {
-		return sourceStationId;
-	}
-
-	public Long getTargetStationId() {
-		return targetStationId;
+		return !Objects.equals(member.getId(), member);
 	}
 
 	@Override
@@ -58,17 +64,17 @@ public class Favorite extends BaseEntity {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		final Favorite favorite = (Favorite)o;
-		return Objects.equals(sourceStationId, favorite.sourceStationId) &&
-			Objects.equals(targetStationId, favorite.targetStationId);
+		return Objects.equals(sourceStation, favorite.sourceStation) &&
+			Objects.equals(targetStation, favorite.targetStation);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(sourceStationId, targetStationId);
+		return Objects.hash(sourceStation, targetStation);
 	}
 
 	public boolean isSameValue(FavoriteRequest favoriteRequest) {
-		return Objects.equals(sourceStationId, favoriteRequest.getSourceStationId())
-			&& Objects.equals(targetStationId, favoriteRequest.getTargetStationId());
+		return Objects.equals(sourceStation, favoriteRequest.getSourceStationId())
+			&& Objects.equals(targetStation, favoriteRequest.getTargetStationId());
 	}
 }

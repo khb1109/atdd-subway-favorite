@@ -58,8 +58,8 @@ public class FavoriteService {
 
 		return favorites.stream()
 			.map(favorite -> new FavoriteResponse(
-				stationsById.get(favorite.getSourceStationId()).getName(),
-				stationsById.get(favorite.getTargetStationId()).getName()
+				stationsById.get(favorite.getSourceStation()).getName(),
+				stationsById.get(favorite.getTargetStation()).getName()
 			)).collect(Collectors.toList());
 	}
 

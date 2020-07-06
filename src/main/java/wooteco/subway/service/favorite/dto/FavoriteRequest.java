@@ -15,7 +15,9 @@ public class FavoriteRequest {
 	}
 
 	static public FavoriteRequest of(Favorite favorite) {
-		return new FavoriteRequest(favorite.getSourceStationId(), favorite.getTargetStationId());
+		//todo
+		return null;
+		// return new FavoriteRequest(favorite.getSourceStation(), favorite.getTargetStation());
 	}
 
 	public Long getSourceStationId() {
@@ -27,6 +29,8 @@ public class FavoriteRequest {
 	}
 
 	public Favorite toEntity(Long memberId) {
-		return new Favorite(memberId, sourceStationId, targetStationId);
+		return null;
+		//todo
+		// return new Favorite(memberId, sourceStationId, targetStationId);
 	}
 }
