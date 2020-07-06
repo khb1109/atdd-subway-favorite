@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import wooteco.subway.domain.line.Line;
 import wooteco.subway.domain.line.LineRepository;
@@ -29,6 +30,7 @@ public class PathService {
 		this.graphService = graphService;
 	}
 
+	@Transactional
 	public PathResponse findPath(String source, String target, PathType type) {
 		if (Objects.equals(source, target)) {
 			throw new RuntimeException();
@@ -45,11 +47,10 @@ public class PathService {
 		List<Station> stations = stationRepository.findAllById(path);
 
 		/// TODO: 2020-07-06 asd
-		List<LineStation> lineStations = null;
-		// List<LineStation> lineStations = lines.stream()
-		//     .flatMap(it -> it.getStations().stream())
-		//     .filter(it -> Objects.nonNull(it.getPreStationId()))
-		//     .collect(Collectors.toList());
+		List<LineStation> lineStations = lines.stream()
+			.flatMap(it -> it.getLineStations().getLineStations().stream())
+			.filter(it -> Objects.nonNull(it.getPreStation()))
+			.collect(Collectors.toList());
 
 		List<LineStation> paths = extractPathLineStation(path, lineStations);
 		int duration = paths.stream().mapToInt(LineStation::getDuration).sum();

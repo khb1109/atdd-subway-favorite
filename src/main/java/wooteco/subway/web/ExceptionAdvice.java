@@ -20,6 +20,7 @@ public class ExceptionAdvice {
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = BAD_REQUEST_MESSAGE)
 	public void domainExceptionHandler(Exception e) {
 		logger.error("domain error >> {}", e.getMessage());
+		e.printStackTrace();
 	}
 
 	// @ExceptionHandler(DbActionExecutionException.class)
@@ -32,5 +33,6 @@ public class ExceptionAdvice {
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = BAD_REQUEST_MESSAGE)
 	public void etcExceptionHandler(Exception e) {
 		logger.error("error >> {}", e.getMessage());
+		e.printStackTrace();
 	}
 }

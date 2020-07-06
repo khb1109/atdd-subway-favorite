@@ -1,9 +1,11 @@
 package wooteco.subway.domain.line;
 
 import java.time.LocalTime;
+import java.util.List;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import lombok.Getter;
@@ -14,7 +16,8 @@ import wooteco.subway.domain.BaseEntity;
 @Getter
 @Setter
 public class Line extends BaseEntity {
-	@Id``
+	@Id
+	@GeneratedValue
 	private Long id;
 	private String name;
 	private LocalTime startTime;
@@ -53,11 +56,15 @@ public class Line extends BaseEntity {
 		}
 	}
 
-	// public void addLineStation(LineStation lineStation) {
-	// 	lineStations.add(lineStation);
-	// }
-	//
-	// public void removeLineStationById(Long stationId) {
-	// 	lineStations.removeById(stationId);
-	// }
+	public void addLineStation(LineStation lineStation) {
+		lineStations.add(lineStation);
+	}
+
+	public void removeLineStationById(Long stationId) {
+		lineStations.removeById(stationId);
+	}
+
+	public List<Long> findOrderedLineStationIds() {
+		return lineStations.getStationIds();
+	}
 }

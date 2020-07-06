@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
@@ -51,22 +52,23 @@ public class LineStations {
 	}
 
 	public List<Long> getStationIds() {
-		List<Long> result = new ArrayList<>();
+		List<Station> result = new ArrayList<>();
 		extractNext(null, result);
-		//
-		// return result;
-		return null;
+
+		return result.stream()
+			.map(Station::getId)
+			.collect(Collectors.toList());
 	}
 
-	private void extractNext(Long preStationId, List<Long> ids) {
-		// stations.stream()
-		// 	.filter(it -> Objects.equals(it.getPreStation(), preStationId))
-		// 	.findFirst()
-		// 	.ifPresent(it -> {
-		// 		Long nextStationId = it.getStation();
-		// 		ids.add(nextStationId);
-		// 		extractNext(nextStationId, ids);
-		// 	});
+	private void extractNext(Station preStation, List<Station> stations) {
+		lineStations.stream()
+			.filter(it -> Objects.equals(it.getPreStation(), preStation))
+			.findFirst()
+			.ifPresent(it -> {
+				Station nextStation = it.getStation();
+				stations.add(nextStation);
+				extractNext(nextStation, stations);
+			});
 	}
 
 	private void updatePreStationOfNextLineStation(Station targetStation, Station newPreStation) {

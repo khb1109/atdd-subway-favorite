@@ -23,11 +23,11 @@ public class LineStationService {
 		this.stationRepository = stationRepository;
 	}
 
+	// 해당 라인의 Station들을 다 가져옴.
 	public LineDetailResponse findLineWithStationsById(Long lineId) {
 		Line line = lineRepository.findById(lineId).orElseThrow(RuntimeException::new);
-		/// TODO: 2020-07-06
-		List<Long> lineStationIds = null;
-		// List<Long> lineStationIds = line.getStationIds();
+		List<Long> lineStationIds = line.findOrderedLineStationIds(); // 순차적이어야함.
+
 		List<Station> stations = stationRepository.findAllById(lineStationIds);
 
 		return LineDetailResponse.of(line, mapStations(lineStationIds, stations));
@@ -35,15 +35,11 @@ public class LineStationService {
 
 	public WholeSubwayResponse findLinesWithStations() {
 		Lines lines = new Lines(lineRepository.findAll());
-		List<Station> stations = stationRepository.findAllById(lines.getStationIds());
+		List<Station> stations = stationRepository.findAllByIdIn(lines.getStationIds());
 
-		/// TODO: 2020-07-06
-
-		List<LineDetailResponse> lineDetailResponses = null;
-
-		// List<LineDetailResponse> lineDetailResponses = lines.getLines().stream()
-		// 	.map(it -> LineDetailResponse.of(it, mapStations(it.getStationIds(), stations)))
-		// 	.collect(Collectors.toList());
+		List<LineDetailResponse> lineDetailResponses = lines.getLines().stream()
+			.map(it -> LineDetailResponse.of(it, mapStations(it.findOrderedLineStationIds(), stations)))
+			.collect(Collectors.toList());
 
 		return WholeSubwayResponse.of(lineDetailResponses);
 	}
@@ -56,7 +52,7 @@ public class LineStationService {
 
 	public void deleteLineStationByStationId(Long stationId) {
 		List<Line> lines = lineRepository.findAll();
-		// lines.forEach(it -> it.removeLineStationById(stationId));
+		lines.forEach(it -> it.removeLineStationById(stationId));
 		lineRepository.saveAll(lines);
 	}
 }

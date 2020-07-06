@@ -43,8 +43,8 @@ public class LineStation extends BaseEntity {
 	}
 
 	public boolean isLineStationOf(Long preStationId, Long stationId) {
-		return this.preStation.equals(preStationId) && this.station.equals(stationId)
-			|| this.preStation.equals(stationId) && this.station.equals(preStationId);
+		return this.preStation.getId().equals(preStationId) && this.station.getId().equals(stationId)
+			|| this.preStation.getId().equals(stationId) && this.station.getId().equals(preStationId);
 	}
 
 	@Override
@@ -63,5 +63,16 @@ public class LineStation extends BaseEntity {
 	@Override
 	public int hashCode() {
 		return Objects.hash(preStation, station, distance, duration);
+	}
+
+	@Override
+	public String toString() {
+		return "LineStation{" +
+			"id=" + id +
+			", preStation=" + preStation +
+			", station=" + station +
+			", distance=" + distance +
+			", duration=" + duration +
+			'}';
 	}
 }
