@@ -1,19 +1,21 @@
 package wooteco.subway.service.favorite.dto;
 
-import javax.validation.constraints.NotNull;
-
 public class FavoriteResponse {
-	@NotNull
+	private Long id;
 	private String sourceStation;
-	@NotNull
 	private String targetStation;
 
 	public FavoriteResponse() {
 	}
 
-	public FavoriteResponse(final String sourceStation, final String targetStation) {
+	public FavoriteResponse(Long id, final String sourceStation, final String targetStation) {
+		this.id = id;
 		this.sourceStation = sourceStation;
 		this.targetStation = targetStation;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public String getSourceStation() {

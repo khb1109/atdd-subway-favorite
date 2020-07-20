@@ -55,48 +55,48 @@ const api = (() => {
 
     const loginMember = {
         create(newMember) {
-            return request(`/me`, METHOD.POST(newMember));
+            return request(`/api/me`, METHOD.POST(newMember));
         },
         login(loginInfo) {
-            return requestWithJsonData(`/me/login`, METHOD.POST(loginInfo));
+            return requestWithJsonData(`/api/me/login`, METHOD.POST(loginInfo));
         },
         get() {
-            return requestWithJsonData(`/me`, METHOD.GET_WITH_AUTH());
+            return requestWithJsonData(`/api/me`, METHOD.GET_WITH_AUTH());
         },
         update(updatedInfo) {
-            return request(`/me`, METHOD.PUT(updatedInfo));
+            return request(`/api/me`, METHOD.PUT(updatedInfo));
         },
         delete() {
-            return request(`/me`, METHOD.DELETE());
+            return request(`/api/me`, METHOD.DELETE());
         }
     };
 
     const line = {
         getAll() {
-            return request(`/lines/detail`);
+            return request(`/api/lines/detail`);
         },
         getAllDetail() {
-            return requestWithJsonData(`/lines/detail`);
+            return requestWithJsonData(`/api/lines/detail`);
         }
     };
 
     const path = {
         find(params) {
             return requestWithJsonData(
-                `/paths?source=${params.source}&target=${params.target}&type=${params.type}`
+                `/api/paths?source=${params.source}&target=${params.target}&type=${params.type}`
             );
         }
     };
 
     const favorite = {
         create(favoritePath) {
-            return request(`/favorites`, METHOD.POST(favoritePath));
+            return request(`/api/favorites`, METHOD.POST(favoritePath));
         },
         getAll() {
-            return requestWithJsonData(`/favorites`, METHOD.GET_WITH_AUTH());
+            return requestWithJsonData(`/api/favorites`, METHOD.GET_WITH_AUTH());
         },
         delete(url = "") {
-            return request(`/favorites${url}`, METHOD.DELETE());
+            return request(`/api/favorites${url}`, METHOD.DELETE());
         }
     };
 

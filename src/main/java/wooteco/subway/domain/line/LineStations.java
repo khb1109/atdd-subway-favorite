@@ -78,7 +78,7 @@ public class LineStations {
 
 	private Optional<LineStation> extractByStationId(Long stationId) {
 		return lineStations.stream()
-			.filter(it -> Objects.equals(it.getStation(), stationId))
+			.filter(it -> Objects.equals(it.getStation().getId(), stationId))
 			.findFirst();
 	}
 

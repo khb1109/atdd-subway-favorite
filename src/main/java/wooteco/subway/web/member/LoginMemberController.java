@@ -20,7 +20,7 @@ import wooteco.subway.service.member.dto.TokenResponse;
 import wooteco.subway.service.member.dto.UpdateMemberRequest;
 
 @RestController
-@RequestMapping("/me")
+@RequestMapping("/api/me")
 public class LoginMemberController {
 	private final MemberService memberService;
 

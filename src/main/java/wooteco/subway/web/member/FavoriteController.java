@@ -19,7 +19,7 @@ import wooteco.subway.service.favorite.dto.FavoriteResponse;
 import wooteco.subway.service.member.MemberService;
 
 @RestController
-@RequestMapping("/favorites")
+@RequestMapping("/api/favorites")
 public class FavoriteController {
 	private final MemberService memberService;
 	private final FavoriteService favoriteService;
@@ -31,6 +31,7 @@ public class FavoriteController {
 
 	@GetMapping
 	public ResponseEntity<List<FavoriteResponse>> getFavorites(@LoginMember Member member) {
+		System.out.println(member);
 		return ResponseEntity.ok(favoriteService.findFavorites(member));
 	}
 

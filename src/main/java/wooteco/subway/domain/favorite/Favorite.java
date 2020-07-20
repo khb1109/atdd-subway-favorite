@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -20,7 +21,7 @@ import wooteco.subway.service.favorite.dto.FavoriteRequest;
 @Setter
 public class Favorite extends BaseEntity {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne
@@ -54,7 +55,7 @@ public class Favorite extends BaseEntity {
 	}
 
 	public boolean isNotSameMember(Member member) {
-		return !Objects.equals(member.getId(), member);
+		return !Objects.equals(this.member.getId(), member.getId());
 	}
 
 	@Override
@@ -76,5 +77,15 @@ public class Favorite extends BaseEntity {
 	public boolean isSameValue(FavoriteRequest favoriteRequest) {
 		return Objects.equals(sourceStation, favoriteRequest.getSourceStationId())
 			&& Objects.equals(targetStation, favoriteRequest.getTargetStationId());
+	}
+
+	@Override
+	public String toString() {
+		return "Favorite{" +
+			"id=" + id +
+			", member=" + member +
+			", sourceStation=" + sourceStation +
+			", targetStation=" + targetStation +
+			'}';
 	}
 }

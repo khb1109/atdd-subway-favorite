@@ -102,8 +102,8 @@ public class FavoriteControllerTest {
 	@Test
 	void getFavorites() throws Exception {
 		given(favoriteService.findFavorites(any())).willReturn(
-			Arrays.asList(new FavoriteResponse(STATION_NAME_YANGJAE, STATION_NAME_YEOKSAM),
-				new FavoriteResponse(STATION_NAME_KANGNAM, STATION_NAME_HANTI)));
+			Arrays.asList(new FavoriteResponse(favorite.getId(), STATION_NAME_YANGJAE, STATION_NAME_YEOKSAM),
+				new FavoriteResponse(favorite.getId(), STATION_NAME_KANGNAM, STATION_NAME_HANTI)));
 
 		this.mockMvc.perform(get("/favorites")
 			.header("Authorization", "bearer brownToken")

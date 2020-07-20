@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import wooteco.subway.domain.favorite.Favorite;
 import wooteco.subway.domain.favorite.FavoriteNotFoundException;
@@ -27,6 +28,7 @@ public class FavoriteService {
 		this.stationRepository = stationRepository;
 	}
 
+	@Transactional
 	public Long add(Member member, FavoriteRequest favoriteRequest) {
 		Optional<Favorite> duplicateFavorite = findDuplicateFavorite(member, favoriteRequest);
 
@@ -34,7 +36,10 @@ public class FavoriteService {
 			return duplicateFavorite.get().getId();
 		}
 
-		Favorite favorite = favoriteRequest.toEntity(member.getId());
+		Favorite favorite = new Favorite(member,
+			stationRepository.findById(favoriteRequest.getSourceStationId()).get()
+			, stationRepository.findById(favoriteRequest.getTargetStationId()).get());
+		System.out.println(favorite);
 		Favorite persistenceFavorite = favoriteRepository.save(favorite);
 
 		return persistenceFavorite.getId();
@@ -58,8 +63,11 @@ public class FavoriteService {
 
 		return favorites.stream()
 			.map(favorite -> new FavoriteResponse(
-				stationsById.get(favorite.getSourceStation()).getName(),
-				stationsById.get(favorite.getTargetStation()).getName()
+				favorite.getId(),
+				favorite.getSourceStation() != null ?
+					stationsById.get(favorite.getSourceStation().getId()).getName() : null,
+				favorite.getTargetStation() != null ?
+					stationsById.get(favorite.getTargetStation().getId()).getName() : null
 			)).collect(Collectors.toList());
 	}
 
