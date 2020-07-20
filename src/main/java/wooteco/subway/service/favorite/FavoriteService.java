@@ -19,63 +19,59 @@ import wooteco.subway.service.favorite.dto.FavoriteResponse;
 
 @Service
 public class FavoriteService {
-	private final FavoriteRepository favoriteRepository;
-	private final StationRepository stationRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final StationRepository stationRepository;
 
-	public FavoriteService(FavoriteRepository favoriteRepository,
-		StationRepository stationRepository) {
-		this.favoriteRepository = favoriteRepository;
-		this.stationRepository = stationRepository;
-	}
+    public FavoriteService(FavoriteRepository favoriteRepository,
+        StationRepository stationRepository) {
+        this.favoriteRepository = favoriteRepository;
+        this.stationRepository = stationRepository;
+    }
 
-	@Transactional
-	public Long add(Member member, FavoriteRequest favoriteRequest) {
-		Optional<Favorite> duplicateFavorite = findDuplicateFavorite(member, favoriteRequest);
+    @Transactional
+    public Long add(Member member, FavoriteRequest favoriteRequest) {
+        Optional<Favorite> duplicateFavorite = findDuplicateFavorite(favoriteRequest);
 
-		if (duplicateFavorite.isPresent()) {
-			return duplicateFavorite.get().getId();
-		}
+        if (duplicateFavorite.isPresent()) {
+            return duplicateFavorite.get().getId();
+        }
 
-		Favorite favorite = new Favorite(member,
-			stationRepository.findById(favoriteRequest.getSourceStationId()).get()
-			, stationRepository.findById(favoriteRequest.getTargetStationId()).get());
-		System.out.println(favorite);
-		Favorite persistenceFavorite = favoriteRepository.save(favorite);
+        Favorite favorite = new Favorite(member,
+            stationRepository.findById(favoriteRequest.getSourceStationId()).get()
+            , stationRepository.findById(favoriteRequest.getTargetStationId()).get());
+        Favorite persistenceFavorite = favoriteRepository.save(favorite);
 
-		return persistenceFavorite.getId();
-	}
+        return persistenceFavorite.getId();
+    }
 
-	public void delete(Member member, Long favoriteId) {
-		Favorite persistenceFavorite = favoriteRepository.findById(favoriteId)
-			.orElseThrow(FavoriteNotFoundException::new);
+    public void delete(Member member, Long favoriteId) {
+        Favorite persistenceFavorite = favoriteRepository.findById(favoriteId)
+            .orElseThrow(FavoriteNotFoundException::new);
 
-		if (persistenceFavorite.isNotSameMember(member)) {
-			throw new IllegalArgumentException("잘못된 삭제 요청입니다." + member + "FavoriteId:" + favoriteId);
-		}
+        if (persistenceFavorite.isNotSameMember(member)) {
+            throw new IllegalArgumentException("잘못된 삭제 요청입니다." + member + "FavoriteId:" + favoriteId);
+        }
 
-		favoriteRepository.delete(persistenceFavorite);
-	}
+        favoriteRepository.delete(persistenceFavorite);
+    }
 
-	public List<FavoriteResponse> findFavorites(Member member) {
-		Map<Long, Station> stationsById = stationRepository.findAll().stream()
-			.collect(Collectors.toMap(Station::getId, station -> station));
-		List<Favorite> favorites = favoriteRepository.findByMemberId(member.getId());
+    public List<FavoriteResponse> findFavorites(Member member) {
+        Map<Long, Station> stationsById = stationRepository.findAll().stream()
+            .collect(Collectors.toMap(Station::getId, station -> station));
+        List<Favorite> favorites = favoriteRepository.findByMemberId(member.getId());
 
-		return favorites.stream()
-			.map(favorite -> new FavoriteResponse(
-				favorite.getId(),
-				favorite.getSourceStation() != null ?
-					stationsById.get(favorite.getSourceStation().getId()).getName() : null,
-				favorite.getTargetStation() != null ?
-					stationsById.get(favorite.getTargetStation().getId()).getName() : null
-			)).collect(Collectors.toList());
-	}
+        return favorites.stream()
+            .map(favorite -> new FavoriteResponse(
+                favorite.getId(),
+                favorite.getSourceStation() != null ?
+                    stationsById.get(favorite.getSourceStation().getId()).getName() : null,
+                favorite.getTargetStation() != null ?
+                    stationsById.get(favorite.getTargetStation().getId()).getName() : null
+            )).collect(Collectors.toList());
+    }
 
-	private Optional<Favorite> findDuplicateFavorite(Member member, FavoriteRequest favoriteRequest) {
-		List<Favorite> favorites = favoriteRepository.findByMemberId(member.getId());
-
-		return favorites.stream()
-			.filter(favoriteIter -> favoriteIter.isSameValue(favoriteRequest))
-			.findAny();
-	}
+    private Optional<Favorite> findDuplicateFavorite(FavoriteRequest favoriteRequest) {
+        return favoriteRepository.findBySourceStationIdAndTargetStationId(
+            favoriteRequest.getSourceStationId(), favoriteRequest.getTargetStationId());
+    }
 }

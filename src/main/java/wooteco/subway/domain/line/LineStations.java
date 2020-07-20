@@ -22,70 +22,69 @@ import wooteco.subway.domain.station.Station;
 @Getter
 @Setter
 public class LineStations {
-	@OneToMany
-	@JoinColumn(name = "line")
-	private Set<LineStation> lineStations = new HashSet<>();
+    @OneToMany
+    @JoinColumn(name = "line")
+    private Set<LineStation> lineStations = new HashSet<>();
 
-	public LineStations(Set<LineStation> lineStations) {
-		this.lineStations = lineStations;
-	}
+    public LineStations(Set<LineStation> lineStations) {
+        this.lineStations = lineStations;
+    }
 
-	public static LineStations empty() {
-		return new LineStations(new HashSet<>());
-	}
+    public static LineStations empty() {
+        return new LineStations(new HashSet<>());
+    }
 
-	public void add(LineStation targetLineStation) {
-		updatePreStationOfNextLineStation(targetLineStation.getPreStation(),
-			targetLineStation.getStation());
-		lineStations.add(targetLineStation);
-	}
+    public void add(LineStation targetLineStation) {
+        updatePreStationOfNextLineStation(targetLineStation.getPreStation(),
+            targetLineStation.getStation());
+        lineStations.add(targetLineStation);
+    }
 
-	private void remove(LineStation targetLineStation) {
-		updatePreStationOfNextLineStation(targetLineStation.getStation(),
-			targetLineStation.getPreStation());
-		lineStations.remove(targetLineStation);
-	}
+    private void remove(LineStation targetLineStation) {
+        updatePreStationOfNextLineStation(targetLineStation.getStation(),
+            targetLineStation.getPreStation());
+        lineStations.remove(targetLineStation);
+    }
 
-	public void removeById(Long targetStationId) {
-		extractByStationId(targetStationId)
-			.ifPresent(this::remove);
-	}
+    public void removeById(Long targetStationId) {
+        extractByStationId(targetStationId)
+            .ifPresent(this::remove);
+    }
 
-	public List<Long> getStationIds() {
-		List<Station> result = new ArrayList<>();
-		extractNext(null, result);
+    public List<Long> getStationIds() {
+        List<Station> result = new ArrayList<>();
+        extractNext(null, result);
 
-		return result.stream()
-			.map(Station::getId)
-			.collect(Collectors.toList());
-	}
+        return result.stream()
+            .map(Station::getId)
+            .collect(Collectors.toList());
+    }
 
-	private void extractNext(Station preStation, List<Station> stations) {
-		lineStations.stream()
-			.filter(it -> Objects.equals(it.getPreStation(), preStation))
-			.findFirst()
-			.ifPresent(it -> {
-				Station nextStation = it.getStation();
-				stations.add(nextStation);
-				extractNext(nextStation, stations);
-			});
-	}
+    private void extractNext(Station preStation, List<Station> stations) {
+        lineStations.stream()
+            .filter(it -> Objects.equals(it.getPreStation(), preStation))
+            .findFirst()
+            .ifPresent(it -> {
+                Station nextStation = it.getStation();
+                stations.add(nextStation);
+                extractNext(nextStation, stations);
+            });
+    }
 
-	private void updatePreStationOfNextLineStation(Station targetStation, Station newPreStation) {
-		extractByPreStationId(targetStation)
-			.ifPresent(it -> it.updatePreLineStation(newPreStation));
-	}
+    private void updatePreStationOfNextLineStation(Station targetStation, Station newPreStation) {
+        extractByPreStationId(targetStation)
+            .ifPresent(it -> it.updatePreLineStation(newPreStation));
+    }
 
-	private Optional<LineStation> extractByStationId(Long stationId) {
-		return lineStations.stream()
-			.filter(it -> Objects.equals(it.getStation().getId(), stationId))
-			.findFirst();
-	}
+    private Optional<LineStation> extractByStationId(Long stationId) {
+        return lineStations.stream()
+            .filter(it -> Objects.equals(it.getStation().getId(), stationId))
+            .findFirst();
+    }
 
-	private Optional<LineStation> extractByPreStationId(Station preStation) {
-		return lineStations.stream()
-			.filter(it -> Objects.equals(it.getPreStation(), preStation))
-			.findFirst();
-	}
-
+    private Optional<LineStation> extractByPreStationId(Station preStation) {
+        return lineStations.stream()
+            .filter(it -> Objects.equals(it.getPreStation(), preStation))
+            .findFirst();
+    }
 }

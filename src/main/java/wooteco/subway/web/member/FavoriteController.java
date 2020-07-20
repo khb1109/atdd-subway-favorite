@@ -21,35 +21,33 @@ import wooteco.subway.service.member.MemberService;
 @RestController
 @RequestMapping("/api/favorites")
 public class FavoriteController {
-	private final MemberService memberService;
-	private final FavoriteService favoriteService;
+    private final MemberService memberService;
+    private final FavoriteService favoriteService;
 
-	public FavoriteController(MemberService memberService, FavoriteService favoriteService) {
-		this.memberService = memberService;
-		this.favoriteService = favoriteService;
-	}
+    public FavoriteController(MemberService memberService, FavoriteService favoriteService) {
+        this.memberService = memberService;
+        this.favoriteService = favoriteService;
+    }
 
-	@GetMapping
-	public ResponseEntity<List<FavoriteResponse>> getFavorites(@LoginMember Member member) {
-		System.out.println(member);
-		return ResponseEntity.ok(favoriteService.findFavorites(member));
-	}
+    @GetMapping
+    public ResponseEntity<List<FavoriteResponse>> getFavorites(@LoginMember Member member) {
+        return ResponseEntity.ok(favoriteService.findFavorites(member));
+    }
 
-	@PostMapping
-	public ResponseEntity<Void> addFavorite(@LoginMember Member member,
-		@RequestBody FavoriteRequest favoriteRequest) {
-		Long favoriteId = favoriteService.add(member, favoriteRequest);
+    @PostMapping
+    public ResponseEntity<Void> addFavorite(@LoginMember Member member,
+        @RequestBody FavoriteRequest favoriteRequest) {
+        Long favoriteId = favoriteService.add(member, favoriteRequest);
 
-		return
-			ResponseEntity
-				.created(
-					URI.create("/favorites/" + favoriteId))
-				.build();
-	}
+        return ResponseEntity
+            .created(
+                URI.create("/favorites/" + favoriteId))
+            .build();
+    }
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteFavorite(@LoginMember Member member, @PathVariable("id") Long favoriteId) {
-		favoriteService.delete(member, favoriteId);
-		return ResponseEntity.ok().build();
-	}
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteFavorite(@LoginMember Member member, @PathVariable("id") Long favoriteId) {
+        favoriteService.delete(member, favoriteId);
+        return ResponseEntity.ok().build();
+    }
 }
